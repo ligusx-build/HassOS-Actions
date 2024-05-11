@@ -76,6 +76,7 @@ jobs:
       run: |
         cp -r rootfs-overlay HassOS/buildroot-external
         cd HassOS
+        sudo mkdir -p /usr/local/git/share/git-core/templates && sudo chown -R my_username /usr/local/git
         git submodule update --init
         wget ${{ secrets.KEY_URL }}/key.pem --no-check-certificate
         wget ${{ secrets.KEY_URL }}/cert.pem --no-check-certificate
