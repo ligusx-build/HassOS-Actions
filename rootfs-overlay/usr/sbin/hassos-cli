@@ -24,7 +24,7 @@ check_internet() {
     for i in $(seq 1 12); do
         if curl -s -k --head https://www.baidu.com | head -n 1 | grep "HTTP/1.[01] [23].." > /dev/null; then
             if ! grep -q "172.30.32.1   github.com ghcr.io" /etc/hosts; then
-                echo "172.30.32.1   github.com ghcr.io raw.githubusercontent.com objects.githubusercontent.com api.github.com github.githubassets.com services.home-assistant.io version.home-assistant.io alerts.home-assistant.io data-v2.hacs.xyz" >> /etc/hosts
+                echo "172.30.32.1   github.com ghcr.io raw.githubusercontent.com objects.githubusercontent.com api.github.com github.githubassets.com alive.github.com services.home-assistant.io version.home-assistant.io alerts.home-assistant.io data-v2.hacs.xyz os-artifacts.home-assistant.io" >> /etc/hosts
             fi
             sleep 5
             if docker images | awk '{print $2}' | grep -q 'landingpage'; then
@@ -99,7 +99,7 @@ change_dns(){
     while true; do
         if docker ps | grep -q hassio_dns; then
             if ! docker exec hassio_dns grep -q 'github.com' /config/hosts; then
-                docker exec -i hassio_dns sed -i  '/^172.30.32.1/ s/$/ github.com ghcr.io raw.githubusercontent.com objects.githubusercontent.com api.github.com github.githubassets.com services.home-assistant.io version.home-assistant.io alerts.home-assistant.io data-v2.hacs.xyz/' /config/hosts
+                docker exec -i hassio_dns sed -i  '/^172.30.32.1/ s/$/ github.com ghcr.io raw.githubusercontent.com objects.githubusercontent.com api.github.com alive.github.com github.githubassets.com services.home-assistant.io version.home-assistant.io alerts.home-assistant.io data-v2.hacs.xyz os-artifacts.home-assistant.io/' /config/hosts
                 docker exec -i hassio_dns killall coredns
             fi
         fi
@@ -204,8 +204,8 @@ python_ssl(){
             if [ -n "$python_installed" ]; then
                 container_site_packages=$(docker exec $container_name python -c "import site; print(':'.join(site.getsitepackages()))")
                 docker cp /etc/ssl/certs/ca-certificates.crt $container_name:$container_site_packages/certifi/cacert.pem
-                docker exec $container_name sed -i 's#https://github.com#https://pushfast.so169.com#g' $container_site_packages/aiogithubapi/const.py
-                docker exec $container_name sed -i 's#https://api.github.com#https://pushapi.so169.com#g' $container_site_packages/aiogithubapi/const.py
+                docker exec $container_name sed -i 's#https://github.com#https://gh.so169.com:3308#g' $container_site_packages/aiogithubapi/const.py
+                #docker exec $container_name sed -i 's#https://api.github.com#https://pushapi.so169.com#g' $container_site_packages/aiogithubapi/const.py
                 docker exec $container_name touch /tmp/python_ssl_modified
             fi
         done

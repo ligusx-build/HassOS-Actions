@@ -85,6 +85,9 @@ jobs:
         sed -i 's/-e\ SUPERVISOR_NAME=hassio_supervisor/-e TZ=Asia\/Shanghai\ -e SUPERVISOR_NAME=hassio_supervisor/g' buildroot-external/rootfs-overlay/usr/sbin/hassos-supervisor
         sed -i '/vhdx/d' buildroot-external/scripts/hdd-image.sh
         sed -i '/vdi/d' buildroot-external/scripts/hdd-image.sh
+        if [ "${{matrix.target}}" == "generic_x86_64" ]; then
+          sed -i 's/SYSTEM_SIZE=256M/SYSTEM_SIZE=512M/' buildroot-external/scripts/hdd-image.sh
+        fi
         #sed -i 's/homeassistant/itcommander/g' buildroot-external/configs/${{matrix.target}}_defconfig
         sed -i 's/Welcome to Home Assistant/Welcome to Home Assistant ( YouTuBe @itcommander )/g' buildroot-external/configs/${{matrix.target}}_defconfig
         echo "BR2_TARGET_GENERIC_ROOT_PASSWD=\"\"" >> buildroot-external/configs/${{matrix.target}}_defconfig
@@ -159,7 +162,7 @@ jobs:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
         file: HassOS/output/images/haos_*
         asset_name: ${{ matrix.asset_name }}
-        tag: HassOS-${{ env.HASSOS_VERSION }}-大陆地区优化版本-${{ env.CURRENT_DATE }}编译
+        tag: ${{ env.HASSOS_VERSION }}
         overwrite: true
         file_glob: true
         body: "针对大陆地区网络专门优化的HassOS版本   欢迎关注Youtube频道https://youtube.com/@itcommander   博客地址https://sumju.net   官方硬件优惠卷领取https://sumju.net/?p=7943"
